@@ -36,12 +36,12 @@ class ConnectGame(Game):
         no_field_left = all(i is not None for i in state.fields)
         return (state.utility != 0) or no_field_left
 
-    def _is_winning(self, fields, player, action):
-        def check_delta(fields, player, action, delta):
+    def _is_winning(self, fields, player, position):
+        def check_delta(fields, player, position, delta):
             n = 0
 
             column_prev, row_prev = None, None
-            for pos in range(action, len(fields), delta):
+            for pos in range(position, len(fields), delta):
                 if fields[pos] != player:
                     break
 
@@ -57,7 +57,7 @@ class ConnectGame(Game):
                 n += 1
 
             column_prev, row_prev = None, None
-            for pos in range(action, -1, -delta):
+            for pos in range(position, -1, -delta):
                 if fields[pos] != player:
                     break
 
@@ -75,7 +75,7 @@ class ConnectGame(Game):
             return n > self.n_in_line
 
         for delta in (1, self.width, self.width - 1, self.width + 1):
-            if check_delta(fields, player, action, delta):
+            if check_delta(fields, player, position, delta):
                 return True
 
         return False
