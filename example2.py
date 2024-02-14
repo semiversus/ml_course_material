@@ -1,37 +1,30 @@
-from typing import TypeVar, Generic
-
-
-StateT = TypeVar('StateT')
-ActionT = TypeVar('ActionT')
-
-
-class Node(Generic[StateT, ActionT]):
-    def __init__(self, state: StateT, parent: 'Node' = None, action: ActionT = None): 
+class Node:
+    def __init__(self, state, parent=None, action=None): 
         self.state = state
         self.parent = parent
         self.action = action
 
-    def solution(self) -> list[ActionT]:
+    def solution(self):
         if self.parent is None:
             return []
-        return self.parent.solution() + [self.action, self.state]
+        return self.parent.solution() + [self.action]
     
     
-class SearchProblem(Generic[StateT, ActionT]):
-    def __init__(self, initial_state: StateT):
+class SearchProblem:
+    def __init__(self, initial_state):
         self.initial_state = initial_state
 
-    def actions(self, state: StateT) -> set[ActionT]:
+    def actions(self, state):
         raise NotImplementedError
     
-    def result(self, node: Node, action: ActionT) -> Node[StateT, ActionT]:
+    def result(self, node, action):
         raise NotImplementedError
     
-    def is_goal_state(self, state: StateT) -> bool:
+    def is_goal_state(self, state):
         raise NotImplementedError
     
 
-def breadth_first_search(problem: SearchProblem[StateT, ActionT]) -> Node[StateT, ActionT]:
+def breadth_first_search(problem):
     frontier = [Node(problem.initial_state)]
     explored = set()
     
@@ -69,6 +62,7 @@ class Hanoi(SearchProblem):
     def is_goal_state(self, state):
         return not state[0] and not state[1] and tuple(sorted(state[2])) == state[2]
 
+
 class NPuzzle(SearchProblem):
     def actions(self, state):
         empty_index = state.index(None)
@@ -99,7 +93,7 @@ class NPuzzle(SearchProblem):
             
         return Node(tuple(new_state), node, action)
     
-    def is_goal_state(self, state) -> bool:
+    def is_goal_state(self, state):
         return state == (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, None)
 
 
@@ -111,8 +105,8 @@ l = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, None]
 
 for i in range(10):
     action = random.choice(list(NPuzzle(l).actions(l)))
-    print(l, action)
     l = list(NPuzzle(l).result(Node(tuple(l)), action).state)
 
+print(l)
 goal_state = breadth_first_search(NPuzzle(tuple(l)))
 print(goal_state.solution())
