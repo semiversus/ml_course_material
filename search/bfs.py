@@ -1,33 +1,40 @@
-class Node:
-    def __init__(self, state, parent=None, action=None): 
+from typing import TypeVar, Generic
+
+
+StateT = TypeVar('StateT')
+ActionT = TypeVar('ActionT')
+
+
+class Node(Generic[StateT, ActionT]):
+    def __init__(self, state: StateT, parent: 'Node' = None, action: ActionT = None):
         self.state = state
         self.parent = parent
         self.action = action
 
-    def solution(self):
+    def solution(self) -> list[ActionT]:
         if self.parent is None:
             return []
-        return self.parent.solution() + [self.action]
-    
-    
-class SearchProblem:
-    def __init__(self, initial_state):
+        return self.parent.solution() + [self.action, self.state]
+
+
+class SearchProblem(Generic[StateT, ActionT]):
+    def __init__(self, initial_state: StateT):
         self.initial_state = initial_state
 
-    def actions(self, state):
+    def actions(self, state: StateT) -> set[ActionT]:
         raise NotImplementedError
-    
-    def result(self, node, action):
-        raise NotImplementedError
-    
-    def is_goal_state(self, state):
-        raise NotImplementedError
-    
 
-def breadth_first_search(problem):
+    def result(self, node: Node, action: ActionT) -> Node[StateT, ActionT]:
+        raise NotImplementedError
+
+    def is_goal_state(self, state: StateT) -> bool:
+        raise NotImplementedError
+
+
+def breadth_first_search(problem: SearchProblem[StateT, ActionT]) -> Node[StateT, ActionT]:
     frontier = [Node(problem.initial_state)]
     explored = set()
-    
+
     while frontier:
         node = frontier.pop(0)
         if problem.is_goal_state(node.state):
@@ -49,16 +56,16 @@ class Hanoi(SearchProblem):
                     continue
                 if (state[i] and not state[j]) or (state[i] and state[i][0] < state[j][0]):
                     action_list.append((i, j))
-        
+
         return action_list
-    
+
     def result(self, node, action):
         i, j = action
         new_state = tuple(map(list, node.state))
         new_state[j].insert(0, new_state[i].pop(0))
         new_state = tuple(map(tuple, new_state))
         return Node(new_state, node, action)
-    
+
     def is_goal_state(self, state):
         return not state[0] and not state[1] and tuple(sorted(state[2])) == state[2]
 
@@ -81,19 +88,19 @@ class NPuzzle(SearchProblem):
         empty_index = node.state.index(None)
         state = list(node.state)
         if action == 'down':
-            new_state = state[:empty_index] + [state[empty_index + 4]] + state[empty_index + 1:empty_index + 4] + [None] 
+            new_state = state[:empty_index] + [state[empty_index + 4]] + state[empty_index + 1:empty_index + 4] + [None]
             if empty_index < 11:
                 new_state += state[empty_index + 5:]
         elif action == 'up':
-            new_state = state[:empty_index - 4] + [None] + state[empty_index - 3:empty_index] + [state[empty_index - 4]] + state[empty_index + 1:] 
+            new_state = state[:empty_index - 4] + [None] + state[empty_index - 3:empty_index] + [state[empty_index - 4]] + state[empty_index + 1:]
         elif action == 'left':
             new_state = state[:empty_index - 1] + [None] + [state[empty_index - 1]] + state[empty_index + 1:]
         else:
             new_state = state[:empty_index] + [state[empty_index + 1]] + [None] + state[empty_index + 2:]
-            
+
         return Node(tuple(new_state), node, action)
-    
-    def is_goal_state(self, state):
+
+    def is_goal_state(self, state) -> bool:
         return state == (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, None)
 
 
@@ -105,8 +112,8 @@ l = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, None]
 
 for i in range(10):
     action = random.choice(list(NPuzzle(l).actions(l)))
+    print(l, action)
     l = list(NPuzzle(l).result(Node(tuple(l)), action).state)
 
-print(l)
 goal_state = breadth_first_search(NPuzzle(tuple(l)))
 print(goal_state.solution())
