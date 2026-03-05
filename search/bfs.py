@@ -14,7 +14,7 @@ class Node(Generic[StateT, ActionT]):
     def solution(self) -> list[ActionT]:
         if self.parent is None:
             return []
-        return self.parent.solution() + [self.action, self.state]
+        return self.parent.solution() + [(self.action, self.state)]
 
 
 class SearchProblem(Generic[StateT, ActionT]):
@@ -104,16 +104,23 @@ class NPuzzle(SearchProblem):
         return state == (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, None)
 
 
-goal_state = breadth_first_search(Hanoi(((1, 2, 3, 4, 5), (), ())))
-print(goal_state.solution())
+print('\nHANOI\n')
+init_state = ((1, 2, 3, 4, 5), (), ())
+goal_state = breadth_first_search(Hanoi(init_state))
+print(f'Initial state: {init_state}')
 
+for action, state in goal_state.solution():
+    print(f'Move from {action[0]} to {action[1]}: {state}')
+
+print('\nN-PUZZLE\n')
 import random
 l = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, None]
 
 for i in range(10):
     action = random.choice(list(NPuzzle(l).actions(l)))
-    print(l, action)
     l = list(NPuzzle(l).result(Node(tuple(l)), action).state)
 
+print(f'Initial state: {l}')
 goal_state = breadth_first_search(NPuzzle(tuple(l)))
-print(goal_state.solution())
+for action, state in goal_state.solution():
+    print(f'Move {action}: {state}')
