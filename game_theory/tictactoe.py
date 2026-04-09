@@ -93,7 +93,7 @@ class ConsoleMatrixPlayer(Player):
 
         while True:
             try:
-                field_number = int(input('Enter your move:'))
+                field_number = int(input(f'Enter your move {game.actions(state)}:'))
             except TypeError:
                 continue
 

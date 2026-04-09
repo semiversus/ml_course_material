@@ -49,7 +49,9 @@ def depth_first_search(start_node: Node):
             node.dump()
             break
 
-        open_nodes += node.extend()
+        new_nodes = node.extend()
+        random.shuffle(new_nodes)
+        open_nodes += new_nodes
 
 
 def a_star_search(start_node: Node):
@@ -71,8 +73,8 @@ def a_star_search(start_node: Node):
                 heapq.heappush(open_nodes, (n.cost + n.heuristic, n))
 
 class EightPuzzle(Node):
-    WIDTH = 3
-    HEIGHT = 3
+    WIDTH = 4
+    HEIGHT = 4
 
     def __init__(self, state: list, parent=None, history=()):
         self.state = state
@@ -101,7 +103,7 @@ class EightPuzzle(Node):
             if (index + 1) % self.WIDTH == 0:
                 print()
 
-        assert len(self.state) == 9
+        assert len(self.state) == self.WIDTH * self.HEIGHT
 
     @classmethod
     def get_random_state(self, iterations=100):
@@ -145,8 +147,8 @@ class EightPuzzle(Node):
         return hash(tuple(self.state))
 
 
-start_node = EightPuzzle.get_random_state(100)
+start_node = EightPuzzle.get_random_state(50)
 start_node.dump()
 breadth_first_search(start_node)
 #depth_first_search(start_node)
-a_star_search(start_node)
+#a_star_search(start_node)

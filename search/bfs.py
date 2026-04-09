@@ -116,7 +116,7 @@ print('\nN-PUZZLE\n')
 import random
 l = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, None]
 
-for i in range(10):
+for i in range(20):
     action = random.choice(list(NPuzzle(l).actions(l)))
     l = list(NPuzzle(l).result(Node(tuple(l)), action).state)
 

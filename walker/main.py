@@ -19,7 +19,7 @@ def fitness(actions, render=False) -> float:
 
     for action in actions:
         obs = env.step(action)
-        f += -obs[0][1]  # use angle
+        f += obs[0][2]  # use horizontal speed
 
     return f
 
