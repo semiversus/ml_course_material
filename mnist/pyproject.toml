@@ -1,0 +1,16 @@
+[project]
+name = "mnist"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = "~=3.12.0"
+dependencies = [
+    "keras>=3.14.0",
+    "matplotlib>=3.10.8",
+    "tensorflow>=2.21.0",
+]
+
+[dependency-groups]
+dev = [
+    "ipykernel>=7.2.0",
+]
